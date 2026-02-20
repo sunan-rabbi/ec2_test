@@ -33,9 +33,6 @@ echo "Node.js installation completed!"
 node -v
 npm -v
 echo ""
-echo "⚠️  IMPORTANT: To use node/npm in your current shell, run:"
-echo "    source ~/.bashrc"
-echo ""
 
 #############################################
 # PART 3 — Install & Configure PostgreSQL

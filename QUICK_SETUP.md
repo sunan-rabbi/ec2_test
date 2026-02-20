@@ -27,10 +27,21 @@ chmod +x basic.sh
 ./basic.sh
 ```
 
+**Then run this command:**
+
+```bash
+source ~/.bashrc
+
+node -v
+npm -v
+```
+
 **Then create PostgreSQL user and database:**
 
 ```bash
 # Create user (you'll be prompted for password)
+
+
 sudo -u postgres createuser --interactive --pwprompt
 
 # Create database (replace with your values)
@@ -49,16 +60,17 @@ sudo -u postgres createdb -O myuser mydb
 
 **4.1. Create Backend Environment File**
 
-````bash
+```bash
 cd ~/REPO/backend
 cp .env.example .env
+```
 
 **4.2. Run Backend Setup Script**
 
 ```bash
 chmod +x server.sh
 ./server.sh
-````
+```
 
 Test the Server
 
@@ -119,6 +131,63 @@ sudo ./nginx.sh
 
 When prompted, enter your EC2 public IP or domain name.
 
+---
+
+### Step 7: Database Management
+
+## Connect to PostgreSQL
+
+```bash
+psql -U ec2user -d ec2testdb -h localhost
+```
+
+## Useful PostgreSQL Commands
+
+```sql
+-- List all tables
+\dt
+
+-- Describe table structure
+\d user
+
+-- View all users
+SELECT * FROM user;
+
+-- Count users
+SELECT COUNT(*) FROM user;
+
+-- Exit
+\q
+```
+
+## Prisma Studio (Database GUI)
+
+Prisma Studio provides a visual interface to view and edit your database. **For security, use SSH tunneling instead of exposing the port publicly.**
+
+### Method 1: SSH Tunnel (Recommended - Most Secure)
+
+**From your local machine (Windows PowerShell or WSL):**
+
+```bash
+# Create SSH tunnel
+ssh -i "your-key.pem" -L 51212:localhost:51212 ubuntu@YOUR_EC2_PUBLIC_IP
+
+# Keep this terminal open
+```
+
+**In a new terminal on the server (or same SSH session):**
+
+```bash
+cd ~/EC2_Test/backend
+npx prisma studio --browser none
+```
+
+**Access from your local browser:** `http://localhost:51212`
+
+This way, Prisma Studio is never exposed to the internet!
+
+---
+
 ## ✅ Verification
 
 Your application should now be accessible at:
@@ -126,5 +195,3 @@ Your application should now be accessible at:
 ```
 http://YOUR_EC2_PUBLIC_IP
 ```
-
----

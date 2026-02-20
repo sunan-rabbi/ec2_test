@@ -490,7 +490,7 @@ Prisma Studio provides a visual interface to view and edit your database. **For 
 
 ### Method 1: SSH Tunnel (Recommended - Most Secure)
 
-**From your local machine (Windows PowerShell):**
+**From your local machine (Windows PowerShell or WSL):**
 
 ```bash
 # Create SSH tunnel
@@ -503,36 +503,9 @@ ssh -i "your-key.pem" -L 51212:localhost:51212 ubuntu@YOUR_EC2_PUBLIC_IP
 
 ```bash
 cd ~/EC2_Test/backend
-npm run studio
+npx prisma studio --browser none
 ```
 
 **Access from your local browser:** `http://localhost:51212`
 
 This way, Prisma Studio is never exposed to the internet!
-
-### Method 2: Temporary Public Access (Less Secure)
-
-**Only use if SSH tunneling is not possible:**
-
-```bash
-# On server - Temporarily allow port 51212
-sudo ufw allow 51212
-
-# Start Prisma Studio
-cd ~/EC2_Test/backend
-npm run studio
-
-# Access from browser: http://YOUR_EC2_PUBLIC_IP:51212
-```
-
-**IMPORTANT: Close port immediately when done:**
-
-```bash
-sudo ufw delete allow 51212
-```
-
-### Stop Prisma Studio
-
-Press `Ctrl + C` in the terminal where it's running.
-
----
