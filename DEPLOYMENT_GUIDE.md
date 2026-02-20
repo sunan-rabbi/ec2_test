@@ -135,7 +135,7 @@ Inside PostgreSQL shell:
 ## Test Connection
 
 ```bash
-sudo -u postgres createdb -O myuser mydb
+sudo -u postgres createdb -O sunan mydb
 ```
 
 ---
@@ -146,8 +146,8 @@ sudo -u postgres createdb -O myuser mydb
 
 ```bash
 cd ~
-git clone https://github.com/YOUR_USERNAME/EC2_Test.git
-cd EC2_Test
+git clone https://github.com/YOUR_USERNAME/<repo>.git
+cd <repo>
 ```
 
 ---
@@ -155,7 +155,7 @@ cd EC2_Test
 # PART 6 — Setup Backend (Express + Prisma + TypeScript)
 
 ```bash
-cd ~/EC2_Test/backend
+cd ~/<repo>/backend
 npm install
 ```
 
@@ -174,9 +174,13 @@ PORT=5000
 # Database - Use ONLINE_DATABASE_URL for production
 DATABASE_URL="postgresql://<username>:<password>@localhost:5432/<database name>"
 
-
 # Cookie Secret (generate a secure random string)
 COOKIE_SECRET="your_secure_random_string_here_use_openssl_rand_base64_32"
+
+#CORS
+NEEDCORS=1
+
+ALLOWORIGINS=http://localhost:3000,http://localhost:3001,http://DOMAIN_IP4,http://DOMAIN_IP4:3000,http://DOMAIN_IP4:3001
 ```
 
 ## Setup Prisma Database
@@ -220,8 +224,8 @@ npm install -g pm2
 ## Start Backend with PM2
 
 ```bash
-cd ~/EC2_Test/backend
-pm2 start dist/src/server.js --name <project name>-backend
+cd ~/<repo>/backend
+pm2 start dist/src/server.js --name server
 pm2 save
 pm2 startup
 ```
@@ -230,7 +234,7 @@ pm2 startup
 
 ```bash
 pm2 status
-pm2 logs ec2test-backend --lines 20
+pm2 logs server --lines 20
 ```
 
 Test endpoint:
@@ -244,14 +248,8 @@ curl http://localhost:5000/health
 # PART 8 — Setup Frontend (Next.js)
 
 ```bash
-cd ~/EC2_Test/frontend
+cd ~/<repo>/frontend
 npm install
-```
-
-Change the API_BASE_URL to use relative path or your domain in env:
-
-```typescript
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 ```
 
 ## Create Environment File
@@ -260,10 +258,10 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 nano .env
 ```
 
-Paste:
+Paste (use empty string to call through nginx):
 
 ```env
-NEXT_PUBLIC_API_URL=http://YOUR_EC2_PUBLIC_IP
+NEXT_PUBLIC_API_URL= http://DOMAIN_IP
 ```
 
 ## Build Next.js
@@ -278,7 +276,7 @@ This will create an optimized production build.
 ## Start Frontend with PM2
 
 ```bash
-pm2 start npm --name "ec2test-frontend" -- start
+pm2 start npm --name "client" -- start
 pm2 save
 ```
 
@@ -286,7 +284,7 @@ pm2 save
 
 ```bash
 pm2 status
-pm2 logs ec2test-frontend --lines 20
+pm2 logs client --lines 20
 ```
 
 Test:
@@ -302,7 +300,7 @@ curl http://localhost:3000
 ## Create Nginx Configuration
 
 ```bash
-sudo nano /etc/nginx/sites-available/ec2test
+sudo nano /etc/nginx/sites-available/app
 ```
 
 Paste (replace YOUR_DOMAIN_OR_IP with your actual domain or IP):
@@ -356,7 +354,7 @@ server {
 
 ```bash
 # Enable the site
-sudo ln -s /etc/nginx/sites-available/ec2test /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/app /etc/nginx/sites-enabled/
 
 # Remove default site (optional)
 sudo rm /etc/nginx/sites-enabled/default
@@ -424,33 +422,7 @@ sudo certbot renew --dry-run
 
 Certbot will automatically renew certificates before expiry.
 
----
-
-# PART 12 — Update Frontend API URL
-
-After setting up domain and SSL, update frontend:
-
-```bash
-cd ~/EC2_Test/frontend
-nano .env.production
-```
-
-Update to:
-
-```env
-NEXT_PUBLIC_API_URL=https://yourdomain.com
-```
-
-## Rebuild & Restart
-
-```bash
-npm run build
-pm2 restart ec2test-frontend
-```
-
----
-
-# PART 13 — Useful PM2 Commands
+# PART 12 — Useful PM2 Commands
 
 ```bash
 # View all processes
@@ -485,7 +457,7 @@ pm2 startup
 
 ---
 
-# PART 14 — Database Management
+# PART 13 — Database Management
 
 ## Connect to PostgreSQL
 
@@ -522,7 +494,7 @@ Prisma Studio provides a visual interface to view and edit your database. **For 
 
 ```bash
 # Create SSH tunnel
-ssh -i "your-key.pem" -L 5555:localhost:5555 ubuntu@YOUR_EC2_PUBLIC_IP
+ssh -i "your-key.pem" -L 51212:localhost:51212 ubuntu@YOUR_EC2_PUBLIC_IP
 
 # Keep this terminal open
 ```
@@ -534,7 +506,7 @@ cd ~/EC2_Test/backend
 npm run studio
 ```
 
-**Access from your local browser:** `http://localhost:5555`
+**Access from your local browser:** `http://localhost:51212`
 
 This way, Prisma Studio is never exposed to the internet!
 
@@ -543,20 +515,20 @@ This way, Prisma Studio is never exposed to the internet!
 **Only use if SSH tunneling is not possible:**
 
 ```bash
-# On server - Temporarily allow port 5555
-sudo ufw allow 5555
+# On server - Temporarily allow port 51212
+sudo ufw allow 51212
 
 # Start Prisma Studio
 cd ~/EC2_Test/backend
 npm run studio
 
-# Access from browser: http://YOUR_EC2_PUBLIC_IP:5555
+# Access from browser: http://YOUR_EC2_PUBLIC_IP:51212
 ```
 
 **IMPORTANT: Close port immediately when done:**
 
 ```bash
-sudo ufw delete allow 5555
+sudo ufw delete allow 51212
 ```
 
 ### Stop Prisma Studio
