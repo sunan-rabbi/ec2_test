@@ -17,7 +17,7 @@ app.use(helmet());
 app.use(compression());
 
 
-if (process.env.NEEDCORS === '1') {
+if (true) {
   const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       const allowedOrigins = process.env.ALLOWORIGINS?.split(',').map(o => o.trim()) || [];
