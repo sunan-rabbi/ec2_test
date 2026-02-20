@@ -22,8 +22,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 echo "Installing Node.js LTS..."
-nvm install --lts
-nvm use --lts
+nvm install 20.20.0
+nvm use 20.20.0
+nvm alias default 20.20.0
+
+echo "Updating npm to version 11.10.1..."
+npm install -g npm@11.10.1
 
 echo "Node.js installation completed!"
 node -v

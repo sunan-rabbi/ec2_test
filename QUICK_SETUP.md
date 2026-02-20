@@ -11,6 +11,11 @@ This guide helps you deploy your Next.js + Express + PostgreSQL application usin
 3. SSH key (.pem file) downloaded
 4. GitHub repository with your code
 
+**Installed Versions:**
+
+- Node.js: v20.20.0
+- npm: v11.10.1
+
 ---
 
 ## 🎯 Deployment Steps
@@ -24,12 +29,11 @@ ssh -i "your-key.pem" ubuntu@YOUR_EC2_PUBLIC_IP
 
 ---
 
-### Step 2: Clone Your Repository
+### Step 2: Setup GitHub Access
 
 ```bash
-cd ~
-git clone https://github.com/YOUR_USERNAME/REPO.git
-cd EC2_Test
+git clone https://YOUR_TOKEN@github.com/YOUR_USERNAME/REPO.git
+cd REPO
 ```
 
 ---
@@ -39,8 +43,8 @@ cd EC2_Test
 This installs Node.js, PostgreSQL, Nginx, and other essential tools.
 
 ```bash
-chmod +x server.sh
-./server.sh
+chmod +x basic.sh
+./basic.sh
 ```
 
 **After the script completes, create PostgreSQL user and database:**
@@ -85,8 +89,8 @@ COOKIE_SECRET="your_secure_random_string"
 **4.2. Run Backend Setup Script**
 
 ```bash
-chmod +x backend.sh
-./backend.sh
+chmod +x server.sh
+./server.sh
 ```
 
 Test the Server
@@ -98,15 +102,14 @@ npm run start
 **4.3. Start Backend with PM2**
 
 ```bash
-npm install -g pm2
-pm2 start dist/src/server.js --name backend
-pm2 save
-pm2 startup
+chmod +x pm2.sh
+./pm2.sh
 ```
 
-Verify backend is running:
+After running the script, copy and execute the PM2 startup command shown, then run:
 
 ```bash
+pm2 save
 pm2 status
 curl http://localhost:5000/health
 ```
@@ -115,32 +118,18 @@ curl http://localhost:5000/health
 
 ### Step 5: Setup Frontend
 
-**5.1. Install Dependencies**
-
 ```bash
 cd ~/REPO/frontend
-npm install
+chmod +x client.sh
+./client.sh
 ```
 
-**5.2. Create Frontend Environment File**
+This script will:
 
-```bash
-nano .env
-```
-
-Add:
-
-```env
-NEXT_PUBLIC_API_URL=http://YOUR_EC2_IP
-```
-
-**5.3. Build and Start Frontend**
-
-```bash
-npm run build
-pm2 start npm --name "frontend" -- start
-pm2 save
-```
+- Install dependencies (npm install)
+- Create .env file from .env.example
+- Build the Next.js application
+- Start frontend with PM2
 
 Verify frontend is running:
 
@@ -156,7 +145,7 @@ curl http://localhost:3000
 Run the Nginx setup script:
 
 ```bash
-cd ~/EC2_Test
+cd ~/REPO
 chmod +x nginx.sh
 sudo ./nginx.sh
 ```

@@ -11,7 +11,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Prompt for domain or IP
-read -p "Enter your domain or IP address (e.g., 13.211.39.17:" DOMAIN_OR_IP
+read -p "Enter your domain or IP address (e.g., 13.211.39.17): " DOMAIN_OR_IP
 
 if [ -z "$DOMAIN_OR_IP" ]; then
     echo "Domain/IP cannot be empty!"
