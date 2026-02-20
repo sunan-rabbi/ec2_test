@@ -6,6 +6,7 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import routes from './app/routes';
+import console from 'node:console';
 
 const app: Application = express();
 
@@ -15,16 +16,23 @@ app.use(helmet());
 
 
 app.use(compression());
+console.log(process.env.NEEDCORS)
 
 
-if (true) {
+if (process.env.NEEDCORS === '1') {
   const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       const allowedOrigins = process.env.ALLOWORIGINS?.split(',').map(o => o.trim()) || [];
       console.log('CORS Request - Origin:', origin);
       console.log('Allowed Origins:', allowedOrigins);
 
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests without origin (same-origin, Postman, curl, etc.)
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         console.log('CORS BLOCKED - Origin not in allowed list');

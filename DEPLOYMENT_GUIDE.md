@@ -340,15 +340,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-
-        # CORS headers (if needed)
-        add_header 'Access-Control-Allow-Origin' '*' always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
-        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization' always;
-
-        if ($request_method = 'OPTIONS') {
-            return 204;
-        }
+        proxy_set_header Origin $http_origin;
     }
 
     # Next.js static files
