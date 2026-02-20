@@ -47,7 +47,13 @@ chmod +x basic.sh
 ./basic.sh
 ```
 
-**After the script completes, create PostgreSQL user and database:**
+**After the script completes, load Node.js into your shell:**
+
+```bash
+source ~/.bashrc
+```
+
+**Then create PostgreSQL user and database:**
 
 ```bash
 # Create user (you'll be prompted for password)
