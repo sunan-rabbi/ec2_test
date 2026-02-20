@@ -1,23 +1,3 @@
-# 🚀 Quick EC2 Setup Guide Using Scripts
-
-This guide helps you deploy your Next.js + Express + PostgreSQL application using automated setup scripts.
-
----
-
-## 📋 Prerequisites
-
-1. AWS EC2 instance (Ubuntu 22.04 LTS)
-2. Security Group with ports: **22, 80, 443** open
-3. SSH key (.pem file) downloaded
-4. GitHub repository with your code
-
-**Installed Versions:**
-
-- Node.js: v20.20.0
-- npm: v11.10.1
-
----
-
 ## 🎯 Deployment Steps
 
 ### Step 1: Connect to Your EC2 Server
@@ -47,12 +27,6 @@ chmod +x basic.sh
 ./basic.sh
 ```
 
-**After the script completes, load Node.js into your shell:**
-
-```bash
-source ~/.bashrc
-```
-
 **Then create PostgreSQL user and database:**
 
 ```bash
@@ -75,29 +49,16 @@ sudo -u postgres createdb -O myuser mydb
 
 **4.1. Create Backend Environment File**
 
-```bash
+````bash
 cd ~/REPO/backend
 cp .env.example .env
-nano .env
-```
-
-Update with your values:
-
-```env
-NODE_ENV=production
-PORT=5000
-DATABASE_URL="postgresql://<username>:<password>@localhost:5432/<database_name>?schema=public"
-NEEDCORS=1
-ALLOWORIGINS=http://localhost:3000,http://YOUR_EC2_IP:3000,http://YOUR_EC2_IP
-COOKIE_SECRET="your_secure_random_string"
-```
 
 **4.2. Run Backend Setup Script**
 
 ```bash
 chmod +x server.sh
 ./server.sh
-```
+````
 
 Test the Server
 
