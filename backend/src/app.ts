@@ -21,9 +21,13 @@ if (process.env.NEEDCORS === '1') {
   const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       const allowedOrigins = process.env.ALLOWORIGINS?.split(',').map(o => o.trim()) || [];
+      console.log('CORS Request - Origin:', origin);
+      console.log('Allowed Origins:', allowedOrigins);
+
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.log('CORS BLOCKED - Origin not in allowed list');
         callback(new Error('Not allowed by CORS'));
       }
     },
