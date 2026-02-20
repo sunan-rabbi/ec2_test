@@ -10,28 +10,28 @@ import routes from './app/routes';
 const app: Application = express();
 
 
-const { COOKIE_SECRET } = process.env;
-
-app.use(cookieParser(COOKIE_SECRET));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(helmet());
 
 
 app.use(compression());
 
 
-const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+if (process.env.NEEDCORS === '1') {
+  const corsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      const allowedOrigins = process.env.ALLOWORIGINS?.split(',').map(o => o.trim()) || [];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    optionsSuccessStatus: 200,
+  };
+  app.use(cors(corsOptions));
+}
 
 
 // Rate limiting
@@ -46,7 +46,6 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // Body parsing middleware
-app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

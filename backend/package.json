@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "prod": "nodemon dist/src/server.js",
+    "start": "nodemon dist/src/server.js",
     "build": "tsc",
     "generate": "npx prisma generate",
     "migrate": "npx prisma migrate dev --name init",
